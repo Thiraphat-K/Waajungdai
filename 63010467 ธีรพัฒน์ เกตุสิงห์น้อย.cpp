@@ -2,63 +2,53 @@
 #include<windows.h>
 #include<conio.h>
 
+bool shoot[5]={0};
+
 void setcolor(int fg,int bg)
 {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, fg+bg*16);
 }
 
-void draw_ship()
+void gotoxy(int x, int y)
 {
-	printf(" ^|0|^ ");
+	COORD ce = { x, y };
+	SetConsoleCursorPosition( GetStdHandle(STD_OUTPUT_HANDLE) , ce);
 }
 
-void erase_ship()
+void draw_ship(int x, int y)
 {
-	printf("       ");
+	gotoxy(x,y);
+	setcolor(4,0);
+	printf("[|-0-|]");
 }
 
-void draw_bl()
+void erase_ship(int x, int y)
 {
+	gotoxy(x,y);
+	setcolor(0,0);
+	printf("        ");
+}
+
+void draw_bl(int x, int y)
+{
+	gotoxy(x,y);
+	setcolor(3,0);
 	printf("^");
 }
 
-void erase_bl()
+void check_bl()
 {
-	printf("       ");
+	setcolor(3,0);
+	gotoxy(0,0);
+	printf("bullet 1 : %d \nbullet 2 : %d \nbullet 3 : %d \nbullet 4 : %d \nbullet 5 : %d" , !shoot[0], !shoot[1], !shoot[2], !shoot[3], !shoot[4]);
 }
 
-void gotoxy(int x, int y)
+void erase_bl(int x, int y)
 {
-	COORD xxx = {0,0};
-	SetConsoleCursorPosition( GetStdHandle(STD_OUTPUT_HANDLE) , xxx);
-	setcolor(2,4);
-	printf("%d %d",x,y);
-	
-	COORD f = { x-1, y};
-	SetConsoleCursorPosition( GetStdHandle(STD_OUTPUT_HANDLE) , f);
+	gotoxy(x,y);
 	setcolor(0,0);
-	erase_ship();
-
-	COORD h = { x+1, y};
-	SetConsoleCursorPosition( GetStdHandle(STD_OUTPUT_HANDLE) , h);
-	setcolor(0,0);
-	erase_ship();
-	
-	COORD c = { x, y };
-	SetConsoleCursorPosition( GetStdHandle(STD_OUTPUT_HANDLE) , c);
-	setcolor(2,4);
-	draw_ship();
-	
-	COORD d = { x+3, y+1};
-	SetConsoleCursorPosition( GetStdHandle(STD_OUTPUT_HANDLE) , d);
-	setcolor(0,0);
-	erase_bl();
-	
-	COORD e = { x+3, y-1};
-	SetConsoleCursorPosition( GetStdHandle(STD_OUTPUT_HANDLE) , e);
-	setcolor(2,4);
-	draw_bl();
+	printf(" ");
 }
 
 void setcursor(bool visible)
@@ -74,27 +64,43 @@ int main()
 {
 	setcursor(0);
 	char ch='.';
-	int x=40,y=20;
-	int i, j;
-	int state = 0;
-	gotoxy(x,y);
+	int x=40,y=25,bsx[5],bsy[5],state=0;
+	draw_ship(x,y);
 	do {
 		if (_kbhit())
 		{
 			ch=getch();
 			if(ch=='a') {state = 1;}
-			if(ch=='d' ) {state = 2;}
-			if(ch=='s' ) {state = 0;}
-			if(ch==' ' ) {state = 3;
-			i=x;
-			j=y-1;}
+			if(ch=='d') {state = 2;}
+			if(ch=='s') {state = 0;}
+			if(ch==' '){
+				for(int i=0;i<5;i++)
+				{
+					if(shoot[i]==0)
+					{
+						bsx[i]=x+3;
+						bsy[i]=y-1;
+						shoot[i]=1;
+						break;
+					}
+				}
+			}
 			fflush(stdin);
 		}
-		if(state==1 && x>0){x--;gotoxy(x,y);}
-		if(state==2 && x<80){x++;gotoxy(x,y);}
-		if(state==0){gotoxy(x,y);}
-		if(state==3 && j>0){j--;gotoxy(i,j);}
-		Sleep(200);
+		if(state==1 && x>0){erase_ship(x,y);draw_ship(--x,y);}
+		if(state==2 && x<80){erase_ship(x,y);draw_ship(++x,y);}
+		if(state==0){erase_ship(x,y);draw_ship(x,y);}
+		for(int i=0;i<5;i++)
+		{
+			if(shoot[i]==1)
+			{
+				erase_bl(bsx[i],bsy[i]);
+				if(bsy[i]>0){draw_bl(bsx[i],--bsy[i]);}
+				else{shoot[i]=0;}
+			}
+		}
+		check_bl();
+		Sleep(150);
 	} while (ch!='x');
 	return 0;
 }
