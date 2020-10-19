@@ -4,7 +4,7 @@ void set(char*);
 
 int main()
 {
-	char y[50];
+	char y[100];
 	char* py = y ;
 	scanf("%s", y);
 	set(py);
