@@ -107,15 +107,9 @@ int main()
 	draw_ship(x,y);
 	
 	do {
-		while (enmcount<20) {
-				while (rand_enm < 10 || rand_enm > 70) {
-					rand_enm = rand() % 100;					
-				}
-				x_enm = rand_enm; rand_enm = 0;
-				while (rand_enm < 2 || rand_enm > 5) {
-					rand_enm = (rand() % 5);
-				}	
-				y_enm = rand_enm;
+		while (enmcount<=20) {
+				x_enm = (rand() % 61)+10;					
+				y_enm = (rand() % 4)+2;
 				draw_enermy(x_enm, y_enm);
 				enmcount++;
 		}
