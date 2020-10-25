@@ -148,28 +148,26 @@ int main()
 			if(shoot[i]==1)
 			{
 				erase_bl(bsx[i],bsy[i]);
-				if(bsy[i]>0){draw_bl(bsx[i],--bsy[i]);}
-				else{shoot[i]=0;}
-				if (cursor(bsx[i]+3, bsy[i]-1) == 'O') {
+				if (cursor(bsx[i], bsy[i]-1) == 'O') {
 						int randomX;
 						randomX = (rand()%9)+1;
 						setcolor(randomX, 0);
 						shoot[i] = 0;
-						gotoxy(bsx[i]+3, bsy[i]-1);
+						gotoxy(bsx[i], bsy[i]-1);
 						printf("$");
 						Beep(200, 75);
-						gotoxy(bsx[i]+3, bsy[i]-1);
+						gotoxy(bsx[i], bsy[i]-1);
 						setcolor(0, 0);
 						printf(" ");
 						
-						erasething(bsx[i]+3, bsy[i]);
 						erasething(bsx[i], bsy[i]-1);
 						erase_bl(bsx[i], bsy[i]);
 						score++;
 						enmcount--;
 						bsy[i] = 0;
 				}
-				
+				if(bsy[i]>0){draw_bl(bsx[i],--bsy[i]);}
+				else{shoot[i]=0;}
 			}
 		}
 		check_bl();
